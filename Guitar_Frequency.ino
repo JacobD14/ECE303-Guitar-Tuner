@@ -1,3 +1,10 @@
+// Jacob Decker and Nick Allen
+// Miami University 
+
+// This code is used to find the frequency of the particular
+// guitar string plucked. It first takes samples to find the energy, 
+// then analyzes the voltage wave to find the period, and then the frequency.
+
 unsigned long energy;
 int voltread = 0;
 int count = 0;
@@ -5,6 +12,7 @@ int period = 0;
 int frequency = 0;
 unsigned long t3;
 unsigned long t4;
+
 void setup() {
   Serial.begin(9600);
 }
@@ -17,6 +25,7 @@ void loop() {
 
   energy = 0;
 
+  // Takes 4500 samples of the wave
   for (int i = 0; i < 4500; i++) {
     voltread = analogRead(A1);
 
@@ -35,7 +44,7 @@ void loop() {
 
 // --------------------------
 
-// ---------- Finding Frequency --------- // Continously check for voltage!!!
+// ---------- Finding Frequency --------- 
 
   if (analogRead(A1) > 600) {
     
@@ -43,7 +52,7 @@ void loop() {
     // While voltage is above zero crossing
     while (analogRead(A1) > 512); // Wait
 
-    // Start timer
+    // Records time right after it crosses
     t3 = micros();
     
     delayMicroseconds(625);
@@ -55,15 +64,18 @@ void loop() {
 
     delayMicroseconds(625);
 
+    // Wait for another cross, completing the period
     while (analogRead(A1) > 512);
 
     count++;
   }
-  
+
+    // Records the time after the 20 crosses
     t4 = micros();
   
   }
 
+  // Calculate the period 
   period = ((t4 - t3) / 10) * 1000000;
 
   frequency = (1/period);
